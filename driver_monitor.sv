@@ -48,6 +48,17 @@
 	     drv_chkr_mbx.put(transaction); 
 	     transaction.print("Driver: Transaccion ejecutada");
 	   end
+	   lectura_escritura: begin
+	        $display("[DRIVER] La transaccion recibida es de tipo lectura/escritura");
+            transaction.dato = vif.dato_out;
+            transaction.tiempo = $time;
+            @(posedge vif.clk);
+            vif.pop = 1;
+            vif.push = 1;
+            drv_chkr_mbx.put(transaction);
+            transaction.print("[DRIVER] Transaccion Ejecutada");
+
+	   end
 	  default: begin
 	    $display("[%g] Driver Error: la transacción recibida no tiene tipo valido",$time);
 	    $finish;
