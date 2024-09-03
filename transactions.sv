@@ -2,16 +2,18 @@ typedef enum { lectura, escritura, reset, lectura_escritura} tipo_trans;
 
 class trans_fifo #(parameter width = 16);
   rand int retardo; 
-  rand bit[width-1:0] dato; 
+  rand bit[width-1:0] dato;
+  bit[width-1:0] dato_le;  
   int tiempo; 
   rand tipo_trans tipo; 
   int max_retardo;
  
   constraint const_retardo {retardo < max_retardo; retardo>0;}
 
-  function new(int ret =0,bit[width-1:0] dto=0,int tmp = 0, tipo_trans tpo = lectura, int mx_rtrd = 10);
+  function new(int ret =0,bit[width-1:0] dto=0, bit[width-1:0] dto_le=0, int tmp = 0, tipo_trans tpo = lectura, int mx_rtrd = 10);
     this.retardo = ret;
     this.dato = dto;
+	this.dato_le = dto_le;
     this.tiempo = tmp;
     this.tipo = tpo;
     this.max_retardo = mx_rtrd;
@@ -87,7 +89,7 @@ endclass
 
 typedef enum {retardo_promedio,reporte} solicitud_sb;
 
-typedef enum {llenado_aleatorio,trans_aleatoria,trans_especifica,sec_trans_aleatorias} instrucciones_agente;
+typedef enum {llenado_aleatorio,trans_aleatoria,trans_especifica,sec_trans_aleatorias, trans_lec_esc} instrucciones_agente;
 
 typedef mailbox #(trans_fifo) trans_fifo_mbx;
 

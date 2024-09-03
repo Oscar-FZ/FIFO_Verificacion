@@ -50,6 +50,7 @@
 	   end
 	   lectura_escritura: begin
 	        $display("[DRIVER] La transaccion recibida es de tipo lectura/escritura");
+			transaction.dato_le = vif.dato_in; //OJO
             transaction.dato = vif.dato_out;
             transaction.tiempo = $time;
             @(posedge vif.clk);

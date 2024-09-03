@@ -65,6 +65,27 @@ class agent #(parameter width = 16, parameter depth = 8);
             agnt_drv_mbx.put(transaccion);
             end
           end
+		 			/*trans_lec_esc: begin
+		 				for(int i=0; i<num_transacciones:i++) begin
+							transaccion = new;
+							transaccion.max_retardo = max_retardo;
+							transaccion.randomize();
+							transaccion.print("[AGENTE] Transaccion Creada");
+							agnt_drv_mbx.put(transaccion);
+						end	
+		  		end*/
+				  trans_lec_esc: begin 
+            for(int i=0; i<num_transacciones;i++) begin
+            transaccion =new;
+            transaccion.max_retardo = max_retardo;
+            transaccion.randomize();
+	    transaccion.tipo = lectura_escritura;
+            transaccion.print("Agente: transacción creada");
+            agnt_drv_mbx.put(transaccion);
+            end
+          end
+
+
         endcase
       end
     end

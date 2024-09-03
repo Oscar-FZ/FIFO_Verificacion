@@ -30,8 +30,13 @@ class test #(parameter width = 16, parameter depth =8);
     fork
       ambiente_inst.run();
     join_none
+
+    instr_agent = trans_lec_esc;
+    test_agent_mbx.put(instr_agent);
+    $display("[%g]  Test: Enviada la primera instruccion al agente Lectura Escritura con num_transacciones %g",$time,num_transacciones);
+    #10000
     
-    instr_agent = llenado_aleatorio;
+    /*instr_agent = llenado_aleatorio;
     test_agent_mbx.put(instr_agent);
     $display("[%g]  Test: Enviada la primera instruccion al agente llenado aleatorio con num_transacciones %g",$time,num_transacciones);
     
@@ -57,6 +62,8 @@ class test #(parameter width = 16, parameter depth =8);
     instr_sb = reporte;
     test_sb_mbx.put(instr_sb);
     #20
+    */
+
     $finish;
   endtask
 endclass 

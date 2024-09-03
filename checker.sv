@@ -1,5 +1,5 @@
 class checker #(parameter width=16, parameter depth =8);
-  trans_fio #(.width(width)) transaccion; 
+  trans_fifo #(.width(width)) transaccion; 
   trans_fifo #(.width(width)) auxiliar; 
   trans_sb   #(.width(width)) to_sb; 
   trans_fifo  emul_fifo[$]; 
@@ -27,7 +27,8 @@ class checker #(parameter width=16, parameter depth =8);
            if(transaccion.dato == auxiliar.dato) begin
              to_sb.dato_enviado = auxiliar.dato;
              to_sb.tiempo_push = auxiliar.tiempo;
-             to_sb.tiempo_pop = transaccion.dato;
+             //to_sb.tiempo_pop = transaccion.dato; //????????????????
+						 to_sb.tiempo_pop = $time;
              to_sb.completado = 1;
              to_sb.calc_latencia();
              to_sb.print("Checker:Transaccion Completada");
@@ -71,7 +72,7 @@ class checker #(parameter width=16, parameter depth =8);
          end
        end
 	   lectura_escritura: begin
-	   	   if(0 !== emul_fifo.size()) begin //Underflow
+	   	   if(0 == emul_fifo.size()) begin //Underflow
 				to_sb.tiempo_pop = transaccion.tiempo;
              	to_sb.underflow = 1;
 				emul_fifo.push_back(transaccion);
@@ -79,23 +80,24 @@ class checker #(parameter width=16, parameter depth =8);
 				chkr_sb_mbx.put(to_sb);
 		   		end
 
-		   else if(emul_fifo.size() == depth)begin //Overflow - Aqui quede
+		   else if(emul_fifo.size() == depth)begin //Overflow - Preguntar
 				auxiliar = emul_fifo.pop_front();
            		if(transaccion.dato == auxiliar.dato) begin
-             		to_sb.dato_enviado = auxiliar.dato;
+             		to_sb.dato_enviado = auxiliar.dato_le;
              		to_sb.tiempo_push = auxiliar.tiempo;
-             		to_sb.tiempo_pop = transaccion.dato;
+             		to_sb.tiempo_pop = $time;
              		to_sb.completado = 1;
              		to_sb.calc_latencia();
-             		to_sb.print("Checker:Transaccion Completada");
-             		chkr_sb_mbx.put(to_sb);
+             		//to_sb.print("Checker:Transaccion Completada");
+             		//chkr_sb_mbx.put(to_sb);
 
-					auxiliar = emul_fifo.pop_front();
+					//auxiliar = emul_fifo.pop_front();
            			//to_sb.dato_enviado = auxiliar.dato;
-           			to_sb.tiempo_push = auxiliar.tiempo;
+           			//to_sb.tiempo_push = auxiliar.tiempo;
            			to_sb.overflow = 1;
-           			to_sb.print("Checker: Overflow");
+           			to_sb.print("Checker: Read & Overflow");
            			chkr_sb_mbx.put(to_sb);
+					transaccion.dato = transaccion.dato_le;
            			emul_fifo.push_back(transaccion);
 
            		end else begin
@@ -113,7 +115,10 @@ class checker #(parameter width=16, parameter depth =8);
              		to_sb.tiempo_pop = transaccion.dato;
              		to_sb.completado = 1;
              		to_sb.calc_latencia();
-             		to_sb.print("Checker:Transaccion Completada");
+             		//to_sb.print("Checker:Transaccion Completada");
+					transaccion.print("Checker: Read & Write");
+					transaccion.dato = transaccion.dato_le;
+           			emul_fifo.push_back(transaccion);
              		chkr_sb_mbx.put(to_sb);
            		end else begin
              		transaccion.print("Checker: Error el dato de la transacción no calza con el esperado");
